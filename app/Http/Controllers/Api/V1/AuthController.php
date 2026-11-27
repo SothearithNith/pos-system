@@ -36,10 +36,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Exchange a refresh token for a NEW access + refresh token (rotation).
-     * The old pair is deleted, so a refresh token can be used only once.
-     */
     public function refresh(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -73,8 +69,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logout successful.']);
     }
 
-    // ------------------------------------------------------------------
-
     /** Returns an error response if this user may not sign in, otherwise null. */
     private function accountError(User $user): ?JsonResponse
     {
@@ -101,18 +95,18 @@ class AuthController extends Controller
     /** Creates an access token and a refresh token that belong together (same device). */
     private function issueTokens(User $user): array
     {
-        $prefix         = 'pos:' . Str::uuid();
-        $accessExpires  = now()->addMinutes(self::ACCESS_MINUTES);
+        $prefix = 'pos:' . Str::uuid();
+        $accessExpires = now()->addMinutes(self::ACCESS_MINUTES);
         $refreshExpires = now()->addDays(self::REFRESH_DAYS);
 
-        $access  = $user->createToken($prefix . ':access', ['access'], $accessExpires);
+        $access = $user->createToken($prefix . ':access', ['access'], $accessExpires);
         $refresh = $user->createToken($prefix . ':refresh', ['refresh'], $refreshExpires);
 
         return [
-            'token_type'         => 'Bearer',
-            'access_token'       => $access->plainTextToken,
+            'token_type' => 'Bearer',
+            'access_token' => $access->plainTextToken,
             'access_expires_at'  => $accessExpires->toIso8601String(),
-            'refresh_token'      => $refresh->plainTextToken,
+            'refresh_token' => $refresh->plainTextToken,
             'refresh_expires_at' => $refreshExpires->toIso8601String(),
         ];
     }
@@ -132,14 +126,14 @@ class AuthController extends Controller
         $permissions = $user->getAllPermissions()->pluck('name')->sort()->values()->all();
 
         return [
-            'user'        => new UserResource($user),
-            'roles'       => $user->roles->map(fn($r) => [
+            'user' => new UserResource($user),
+            'roles' => $user->roles->map(fn($r) => [
                 'id' => $r->id,
                 'name' => $r->name,
                 'name_kh' => $r->name_kh,
             ])->values(),
             'permissions' => $permissions,
-            'menus'       => $this->menusFor($permissions),
+            'menus' => $this->menusFor($permissions),
         ];
     }
 
@@ -154,10 +148,10 @@ class AuthController extends Controller
         $children = $menus->whereNotNull('parent_id')->groupBy('parent_id');
 
         $item = fn($m) => [
-            'slug'       => $m->slug,
-            'name_en'    => $m->name_en,
-            'name_kh'    => $m->name_kh,
-            'icon'       => $m->icon,
+            'slug' => $m->slug,
+            'name_en' => $m->name_en,
+            'name_kh' => $m->name_kh,
+            'icon' => $m->icon,
             'route_name' => $m->route_name,
         ];
 
