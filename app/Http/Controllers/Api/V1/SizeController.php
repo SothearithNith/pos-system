@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\SizeRequest;
 use App\Http\Resources\Api\V1\SizeResource;
+use App\Models\Color;
 use App\Models\Size;
 use Illuminate\Http\Request;
 
@@ -15,7 +17,7 @@ class SizeController extends Controller
             ->when($request->has('is_active'), function ($query) use ($request) {
                 $query->where('is_active', $request->boolean('is_active'));
             })
-            ->latest()
+            ->orderBy('id', 'desc')
             ->paginate($request->input('per_page', 10));
 
         return SizeResource::collection($colors)
@@ -24,35 +26,45 @@ class SizeController extends Controller
             ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(SizeRequest $request)
     {
-        //
+        $size = Size::create($request->validated());
+
+        return (new SizeResource($size))->additional(["message" => "Size created successfully."]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Size $size)
     {
-        //
+        return (new SizeResource($size))
+            ->additional([
+                'message' => 'Color retrieved successfully with ID ' . $size->id . '.'
+            ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(SizeRequest $request, Size $size)
     {
-        //
+        $size->update($request->validated());
+
+        return (new SizeResource($size))->additional(["message" => "Size updated successfully."]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Size $size)
     {
-        //
+        $size->delete();
+        return response()->json([
+            'message' => 'Size deleted successfully.'
+        ]);
+    }
+
+    public function toggleStatus(Size $size)
+    {
+        $size->update([
+            'is_active' => !$size->is_active
+        ]);
+
+        return (new SizeResource($size->refresh()))
+            ->additional([
+                'message' => 'Size status updated successfully.'
+            ]);
     }
 }
