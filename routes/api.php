@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::patch('colors/{color}/toggle-status', [ColorController::class, 'toggleStatus']);
 
         Route::apiResource('/sizes', SizeController::class);
+        Route::patch('/sizes/{size}/toggle-status', [SizeController::class,'toggleStatus']);
 
         // ---- protect each route with its permission ----
         // Route::get('/products', [ProductController::class, 'index'])->middleware('permission:products.view');
