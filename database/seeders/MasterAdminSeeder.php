@@ -41,7 +41,7 @@ class MasterAdminSeeder extends Seeder
                 'client_id' => null,
                 'name_en'   => 'Master Admin',
                 'name_kh'   => 'អ្នកគ្រប់គ្រងមេ',
-                'password'  => Hash::make(env('MASTER_ADMIN_PASSWORD', 'ChangeMe!2026')),
+                'password'  => Hash::make('0'),
                 'is_active' => true,
             ]
         );
