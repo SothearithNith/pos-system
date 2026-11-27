@@ -25,6 +25,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/user', [AuthController::class, 'me'])->name('api.v1.user');   // old URL
 
         Route::apiResource('colors', ColorController::class);
+        Route::patch('colors/{color}/toggle-status', [ColorController::class, 'toggleStatus']);
 
         // ---- protect each route with its permission ----
         // Route::get('/products', [ProductController::class, 'index'])->middleware('permission:products.view');
