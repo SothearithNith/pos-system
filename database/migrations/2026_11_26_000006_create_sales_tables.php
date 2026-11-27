@@ -16,7 +16,7 @@ return new class extends Migration
             $t->string('code', 30);
             $t->string('name_en');
             $t->string('name_kh')->nullable();
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'code']);

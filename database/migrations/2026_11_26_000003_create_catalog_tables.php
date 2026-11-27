@@ -14,7 +14,7 @@ return new class extends Migration
             $t->foreignId('parent_id')->nullable()->constrained('categories')->nullOnDelete();
             $t->string('name_en');
             $t->string('name_kh')->nullable();
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'parent_id', 'name_en']);
@@ -26,7 +26,7 @@ return new class extends Migration
             $t->string('name_en');
             $t->string('name_kh')->nullable();
             $t->string('logo')->nullable();
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'name_en']);
@@ -43,7 +43,7 @@ return new class extends Migration
             $t->text('description')->nullable();
             $t->string('image_url')->nullable();
             $t->decimal('base_price', 12, 2)->default(0);
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             // unique per client (was globally unique before)
@@ -55,7 +55,7 @@ return new class extends Migration
             $t->string('name_en')->unique();
             $t->string('name_kh')->nullable();
             $t->string('code', 20)->nullable();          // hex, e.g. #FF0000
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
         });
 
@@ -63,7 +63,7 @@ return new class extends Migration
             $t->id();
             $t->string('name_en')->unique();
             $t->string('name_kh')->nullable();
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
         });
 
@@ -79,7 +79,7 @@ return new class extends Migration
             $t->string('name_kh')->nullable();
             $t->decimal('price', 12, 2);
             $t->decimal('cost_price', 12, 2)->default(0);   // default purchase cost
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['product_id', 'color_id', 'size_id']);

@@ -17,7 +17,7 @@ return new class extends Migration
             $t->string('name_kh')->nullable();
             $t->string('code', 30);
             $t->boolean('is_default')->default(false);
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'code']);
@@ -59,13 +59,13 @@ return new class extends Migration
             $t->foreignId('client_id')->constrained('clients')->cascadeOnDelete();
             $t->foreignId('location_id')->constrained('stock_locations')->restrictOnDelete();
             $t->foreignUuid('variant_id')->constrained('variants')->restrictOnDelete();
-            // opening | purchase | sale | sale_void | adjustment
-            // transfer_in | transfer_out | stock_check
+            // opening | purchase | sale | sale_void | adjustment | transfer_in | transfer_out
+            // (stock count differences are written as 'adjustment' via stock_adjustments)
             $t->string('type', 30);
             $t->integer('quantity');
             $t->integer('balance_after');
             $t->decimal('unit_cost', 12, 2)->nullable();
-            $t->string('reference_type', 50)->nullable();     // sales, stock_checks, stock_transfers
+            $t->string('reference_type', 50)->nullable();     // sales, purchases, stock_adjustments, stock_transfers
             $t->string('reference_id', 36)->nullable();
             $t->string('note')->nullable();
             $t->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
@@ -82,6 +82,7 @@ return new class extends Migration
             $t->foreignId('location_id')->constrained('stock_locations')->cascadeOnDelete();
             $t->string('check_no');
             $t->string('status', 20)->default('draft');       // draft | counting | completed | cancelled
+            // when a check is completed, differences are posted through a stock_adjustment (reason 'stock_count')
             $t->text('note')->nullable();
             $t->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $t->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
@@ -103,6 +104,39 @@ return new class extends Migration
             $t->timestamps();
 
             $t->unique(['stock_check_id', 'variant_id']);
+        });
+
+        // Stock adjustment: any manual correction of stock (count difference, damaged, expired, lost, found ...)
+        Schema::create('stock_adjustments', function (Blueprint $t) {
+            $t->id();
+            $t->foreignId('client_id')->constrained('clients')->cascadeOnDelete();
+            $t->foreignId('location_id')->constrained('stock_locations')->restrictOnDelete();
+            $t->foreignId('stock_check_id')->nullable()->constrained('stock_checks')->nullOnDelete(); // set when created from a stock count
+            $t->string('adjustment_no');
+            $t->string('reason', 30)->default('other');       // stock_count | damaged | expired | lost | found | other
+            $t->string('status', 20)->default('draft');       // draft | approved | cancelled (stock changes on approve)
+            $t->text('note')->nullable();
+            $t->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $t->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
+            $t->timestamp('approved_at')->nullable();
+            $t->timestamps();
+
+            $t->unique(['client_id', 'adjustment_no']);
+            $t->index(['location_id', 'status']);
+        });
+
+        Schema::create('stock_adjustment_items', function (Blueprint $t) {
+            $t->id();
+            $t->foreignId('stock_adjustment_id')->constrained('stock_adjustments')->cascadeOnDelete();
+            $t->foreignUuid('variant_id')->constrained('variants')->restrictOnDelete();
+            $t->integer('qty_before')->default(0);            // stock at the moment of adjustment
+            $t->integer('qty_after')->default(0);             // wanted stock
+            $t->integer('difference_qty')->default(0);        // qty_after - qty_before (+ found, - lost)
+            $t->decimal('unit_cost', 12, 2)->nullable();      // to value the loss / gain
+            $t->string('note')->nullable();
+            $t->timestamps();
+
+            $t->unique(['stock_adjustment_id', 'variant_id']);
         });
 
         Schema::create('stock_transfers', function (Blueprint $t) {
@@ -134,6 +168,8 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::dropIfExists('stock_adjustment_items');
+        Schema::dropIfExists('stock_adjustments');
         Schema::dropIfExists('stock_transfer_items');
         Schema::dropIfExists('stock_transfers');
         Schema::dropIfExists('stock_check_items');
