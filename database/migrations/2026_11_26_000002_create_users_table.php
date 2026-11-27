@@ -24,11 +24,7 @@ return new class extends Migration
             $t->string('pos_pin')->nullable();          // hashed PIN (Hash::make) used to sign in to the cash register
             $t->boolean('is_active')->default(true);
 
-            // store the SHA-256 hash, never the plain token
-            $t->string('access_token', 64)->nullable()->unique();
-            $t->timestamp('access_token_expires_at')->nullable();
-            $t->string('refresh_token', 64)->nullable()->unique();
-            $t->timestamp('refresh_token_expires_at')->nullable();
+            // API tokens are stored by Laravel Sanctum (personal_access_tokens table)
 
             $t->rememberToken();
             $t->timestamps();
