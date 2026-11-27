@@ -9,23 +9,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('menus', function (Blueprint $table) {
-            $table->id();
-            $table->string('name_kh')->nullable();
-            $table->string('name_en')->unique();
-            $table->string('slug')->unique();
-            $table->string('icon')->nullable();
-            $table->string('route_name')->unique();
-            $table->string('permission_name')->unique();
+        // Sidebar menu. Each menu item can require one permission (Spatie), e.g. "products.view".
+        Schema::create('menus', function (Blueprint $t) {
+            $t->id();
+            $t->foreignId('parent_id')->nullable()->constrained('menus')->nullOnDelete();
+            $t->string('slug')->unique();
+            $t->string('name_en');
+            $t->string('name_kh')->nullable();
+            $t->string('icon')->nullable();                     // bootstrap icon class
+            $t->string('route_name')->nullable();               // NULL for a group that only holds children
+            $t->string('permission_name')->nullable();          // used to create the Spatie permission
+            $t->unsignedInteger('sort_order')->default(0);
+            $t->boolean('is_active')->default(true);
+            $t->timestamps();
 
-            $table->foreignId('parent_id')
-                ->nullable()
-                ->constrained('menus')
-                ->nullOnDelete();
-
-            $table->integer('sort_order')->default(0);
-            $table->boolean('status')->default(true);
-            $table->timestamps();
+            $t->index(['parent_id', 'sort_order']);
         });
     }
 

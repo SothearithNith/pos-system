@@ -9,164 +9,149 @@ class MenuSeeder extends Seeder
 {
     public function run(): void
     {
-        $menus = [
+        // Groups hold children. sort_order is generated from the position in this list.
+        $tree = [
             [
-                'name_kh' => 'ផ្ទាំងគ្រប់គ្រង',
-                'name_en' => 'Dashboard',
                 'slug' => 'dashboard',
+                'en' => 'Dashboard',
+                'kh' => 'ផ្ទាំងគ្រប់គ្រង',
                 'icon' => 'bi bi-speedometer2',
-                'route_name' => 'admin.dashboard',
-                'permission_name' => 'dashboard.view',
-                'parent_id' => null,
-                'sort_order' => 1,
+                'route' => 'admin.dashboard',
+                'perm' => 'dashboard.view',
             ],
+
+            // ---------- Sales & cash register ----------
             [
-                'name_kh' => 'វេន',
-                'name_en' => 'Shifts',
-                'slug' => 'shifts',
-                'icon' => 'bi bi-clock-history',
-                'route_name' => 'admin.shifts',
-                'permission_name' => 'shifts.view',
-                'parent_id' => null,
-                'sort_order' => 2,
-            ],
-            [
-                'name_kh' => 'ស្តុកទំនិញ',
-                'name_en' => 'Inventory',
-                'slug' => 'inventory',
-                'icon' => 'bi bi-boxes',
-                'route_name' => 'admin.inventory',
-                'permission_name' => 'inventory.view',
-                'parent_id' => null,
-                'sort_order' => 3,
-            ],
-            [
-                'name_kh' => 'ផលិតផល',
-                'name_en' => 'Products',
-                'slug' => 'products',
-                'icon' => 'bi bi-box-seam',
-                'route_name' => 'admin.products',
-                'permission_name' => 'products.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 4,
-            ],
-            [
-                'name_kh' => 'ម៉ាកផលិតផល',
-                'name_en' => 'Brands',
-                'slug' => 'brands',
-                'icon' => 'bi bi-tags',
-                'route_name' => 'admin.brands',
-                'permission_name' => 'brands.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 5,
-            ],
-            [
-                'name_kh' => 'ប្រភេទផលិតផល',
-                'name_en' => 'Categories',
-                'slug' => 'categories',
-                'icon' => 'bi bi-grid',
-                'route_name' => 'admin.categories',
-                'permission_name' => 'categories.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 6,
-            ],
-            [
-                'name_kh' => 'ចលនាស្តុក',
-                'name_en' => 'Stock Movements',
-                'slug' => 'stock-movements',
-                'icon' => 'bi bi-arrow-left-right',
-                'route_name' => 'admin.stock',
-                'permission_name' => 'stock.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 7,
-            ],
-            [
-                'name_kh' => 'ការបញ្ជាទិញ',
-                'name_en' => 'Purchase Orders',
-                'slug' => 'purchase-orders',
-                'icon' => 'bi bi-cart-plus',
-                'route_name' => 'admin.purchase-orders',
-                'permission_name' => 'purchase-orders.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 8,
-            ],
-            [
-                'name_kh' => 'ការលក់',
-                'name_en' => 'Sales',
-                'slug' => 'sales',
+                'slug' => 'sales-cash',
+                'en' => 'Sales & Cash',
+                'kh' => 'ការលក់ និងសាច់ប្រាក់',
                 'icon' => 'bi bi-receipt',
-                'route_name' => 'admin.sales',
-                'permission_name' => 'sales.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 9,
+                'perm' => 'sales-cash.view',
+                'children' => [
+                    ['slug' => 'sales', 'en' => 'Sales', 'kh' => 'ការលក់', 'icon' => 'bi bi-receipt-cutoff', 'route' => 'admin.sales', 'perm' => 'sales.view'],
+                    ['slug' => 'shifts', 'en' => 'Shifts', 'kh' => 'វេន', 'icon' => 'bi bi-clock-history', 'route' => 'admin.shifts', 'perm' => 'shifts.view'],
+                    ['slug' => 'cash-registers', 'en' => 'Cash Registers', 'kh' => 'ម៉ាស៊ីនគិតលុយ', 'icon' => 'bi bi-pc-display', 'route' => 'admin.cash-registers', 'perm' => 'cash-registers.view'],
+                ],
             ],
+
+            // ---------- Purchasing ----------
             [
-                'name_kh' => 'អ្នកផ្គត់ផ្គង់',
-                'name_en' => 'Suppliers',
-                'slug' => 'suppliers',
-                'icon' => 'bi bi-truck',
-                'route_name' => 'admin.suppliers',
-                'permission_name' => 'suppliers.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 10,
+                'slug' => 'purchasing',
+                'en' => 'Purchasing',
+                'kh' => 'ការទិញចូល',
+                'icon' => 'bi bi-cart-plus',
+                'perm' => 'purchasing.view',
+                'children' => [
+                    ['slug' => 'purchase-orders', 'en' => 'Purchase Orders', 'kh' => 'ការបញ្ជាទិញ', 'icon' => 'bi bi-bag-check', 'route' => 'admin.purchase-orders', 'perm' => 'purchase-orders.view'],
+                    ['slug' => 'suppliers', 'en' => 'Suppliers', 'kh' => 'អ្នកផ្គត់ផ្គង់', 'icon' => 'bi bi-truck', 'route' => 'admin.suppliers', 'perm' => 'suppliers.view'],
+                ],
             ],
+
+            // ---------- Inventory ----------
             [
-                'name_kh' => 'អតិថិជន',
-                'name_en' => 'Customers',
-                'slug' => 'customers',
+                'slug' => 'inventory',
+                'en' => 'Inventory',
+                'kh' => 'ស្តុកទំនិញ',
+                'icon' => 'bi bi-boxes',
+                'perm' => 'inventory.view',
+                'children' => [
+                    ['slug' => 'stocks', 'en' => 'Stock', 'kh' => 'ស្តុក', 'icon' => 'bi bi-box2', 'route' => 'admin.stocks', 'perm' => 'stocks.view'],
+                    ['slug' => 'stock-movements', 'en' => 'Stock Movements', 'kh' => 'ចលនាស្តុក', 'icon' => 'bi bi-arrow-left-right', 'route' => 'admin.stock-movements', 'perm' => 'stock-movements.view'],
+                    ['slug' => 'stock-checks', 'en' => 'Stock Checks', 'kh' => 'ការរាប់ស្តុក', 'icon' => 'bi bi-clipboard-check', 'route' => 'admin.stock-checks', 'perm' => 'stock-checks.view'],
+                    ['slug' => 'stock-adjustments', 'en' => 'Stock Adjustments', 'kh' => 'ការកែតម្រូវស្តុក', 'icon' => 'bi bi-pencil-square', 'route' => 'admin.stock-adjustments', 'perm' => 'stock-adjustments.view'],
+                    ['slug' => 'stock-transfers', 'en' => 'Stock Transfers', 'kh' => 'ការផ្ទេរស្តុក', 'icon' => 'bi bi-truck-flatbed', 'route' => 'admin.stock-transfers', 'perm' => 'stock-transfers.view'],
+                ],
+            ],
+
+            // ---------- Catalog ----------
+            [
+                'slug' => 'catalog',
+                'en' => 'Catalog',
+                'kh' => 'កាតាឡុកផលិតផល',
+                'icon' => 'bi bi-box-seam',
+                'perm' => 'catalog.view',
+                'children' => [
+                    ['slug' => 'products', 'en' => 'Products', 'kh' => 'ផលិតផល', 'icon' => 'bi bi-box-seam', 'route' => 'admin.products', 'perm' => 'products.view'],
+                    ['slug' => 'brands', 'en' => 'Brands', 'kh' => 'ម៉ាកផលិតផល', 'icon' => 'bi bi-tags', 'route' => 'admin.brands', 'perm' => 'brands.view'],
+                    ['slug' => 'categories', 'en' => 'Categories', 'kh' => 'ប្រភេទផលិតផល', 'icon' => 'bi bi-grid', 'route' => 'admin.categories', 'perm' => 'categories.view'],
+                    ['slug' => 'colors', 'en' => 'Colors', 'kh' => 'ពណ៌', 'icon' => 'bi bi-palette', 'route' => 'admin.colors', 'perm' => 'colors.view'],
+                    ['slug' => 'sizes', 'en' => 'Sizes', 'kh' => 'ទំហំ', 'icon' => 'bi bi-rulers', 'route' => 'admin.sizes', 'perm' => 'sizes.view'],
+                ],
+            ],
+
+            // ---------- Customers & discounts ----------
+            [
+                'slug' => 'customer-management',
+                'en' => 'Customers & Discounts',
+                'kh' => 'អតិថិជន និងការបញ្ចុះតម្លៃ',
                 'icon' => 'bi bi-people',
-                'route_name' => 'admin.customers',
-                'permission_name' => 'customers.view',
-                'parent_id' => 'inventory',
-                'sort_order' => 11,
+                'perm' => 'customer-management.view',
+                'children' => [
+                    ['slug' => 'customers', 'en' => 'Customers', 'kh' => 'អតិថិជន', 'icon' => 'bi bi-person-lines-fill', 'route' => 'admin.customers', 'perm' => 'customers.view'],
+                    ['slug' => 'customer-groups', 'en' => 'Customer Groups', 'kh' => 'ក្រុមអតិថិជន', 'icon' => 'bi bi-award', 'route' => 'admin.customer-groups', 'perm' => 'customer-groups.view'],
+                    ['slug' => 'discounts', 'en' => 'Discounts', 'kh' => 'ការបញ្ចុះតម្លៃ', 'icon' => 'bi bi-percent', 'route' => 'admin.discounts', 'perm' => 'discounts.view'],
+                ],
             ],
+
+            // ---------- Settings ----------
             [
-                'name_kh' => 'ការកំណត់',
-                'name_en' => 'Settings',
                 'slug' => 'settings',
+                'en' => 'Settings',
+                'kh' => 'ការកំណត់',
                 'icon' => 'bi bi-gear',
-                'route_name' => 'admin.settings',
-                'permission_name' => 'settings.view',
-                'parent_id' => null,
-                'sort_order' => 12,
+                'perm' => 'settings.view',
+                'children' => [
+                    ['slug' => 'branches', 'en' => 'Branches', 'kh' => 'សាខា', 'icon' => 'bi bi-building', 'route' => 'admin.settings.branches', 'perm' => 'branches.view'],
+                    ['slug' => 'stock-locations', 'en' => 'Stock Locations', 'kh' => 'ទីតាំងស្តុក', 'icon' => 'bi bi-geo-alt', 'route' => 'admin.settings.stock-locations', 'perm' => 'stock-locations.view'],
+                    ['slug' => 'payment-methods', 'en' => 'Payment Methods', 'kh' => 'វិធីបង់ប្រាក់', 'icon' => 'bi bi-credit-card', 'route' => 'admin.settings.payment-methods', 'perm' => 'payment-methods.view'],
+                    ['slug' => 'users', 'en' => 'Users', 'kh' => 'អ្នកប្រើប្រាស់', 'icon' => 'bi bi-person-gear', 'route' => 'admin.settings.users', 'perm' => 'users.view'],
+                    ['slug' => 'roles', 'en' => 'Roles & Permissions', 'kh' => 'តួនាទី និងសិទ្ធិ', 'icon' => 'bi bi-shield-lock', 'route' => 'admin.settings.roles', 'perm' => 'roles.view'],
+                    ['slug' => 'system-configuration', 'en' => 'System Configuration', 'kh' => 'ការកំណត់ប្រព័ន្ធ', 'icon' => 'bi bi-sliders', 'route' => 'admin.settings.configuration', 'perm' => 'system-configuration.view'],
+                ],
             ],
+
+            // ---------- Platform admin only (give this permission to Master Admin only) ----------
             [
-                'name_kh' => 'សាខា និងឧបករណ៍',
-                'name_en' => 'Branches & Devices',
-                'slug' => 'branches-devices',
-                'icon' => 'bi bi-building',
-                'route_name' => 'admin.settings.branches',
-                'permission_name' => 'branches.view',
-                'parent_id' => 'settings',
-                'sort_order' => 13,
-            ],
-            [
-                'name_kh' => 'ការកំណត់ប្រព័ន្ធ',
-                'name_en' => 'System Configuration',
-                'slug' => 'system-configuration',
-                'icon' => 'bi bi-sliders',
-                'route_name' => 'admin.settings.configuration',
-                'permission_name' => 'system-configuration.view',
-                'parent_id' => 'settings',
-                'sort_order' => 14,
+                'slug' => 'clients',
+                'en' => 'Clients',
+                'kh' => 'ម្ចាស់ហាង',
+                'icon' => 'bi bi-shop',
+                'route' => 'admin.clients',
+                'perm' => 'clients.view',
             ],
         ];
 
-        foreach ($menus as $menu) {
-            $parentSlug = $menu['parent_id'];
-            unset($menu['parent_id']);
+        $order = 0;
+        $slugs = [];
 
-            $parent = $parentSlug
-                ? Menu::where('slug', $parentSlug)->firstOrFail()
-                : null;
+        foreach ($tree as $item) {
+            $parent = $this->save($item, null, ++$order, $slugs);
 
-            Menu::updateOrCreate(
-                ['slug' => $menu['slug']],
-                array_merge($menu, [
-                    'parent_id' => $parent?->id,
-                    'status' => true,
-                ])
-            );
+            foreach ($item['children'] ?? [] as $child) {
+                $this->save($child, $parent->id, ++$order, $slugs);
+            }
         }
+
+        // menus removed from this list are hidden instead of deleted
+        Menu::whereNotIn('slug', $slugs)->update(['is_active' => false]);
+    }
+
+    private function save(array $item, ?int $parentId, int $order, array &$slugs): Menu
+    {
+        $slugs[] = $item['slug'];
+
+        return Menu::updateOrCreate(
+            ['slug' => $item['slug']],
+            [
+                'parent_id' => $parentId,
+                'name_en' => $item['en'],
+                'name_kh' => $item['kh'],
+                'icon' => $item['icon'] ?? null,
+                'route_name' => $item['route'] ?? null,
+                'permission_name' => $item['perm'] ?? null,
+                'sort_order' => $order,
+                'is_active' => true,
+            ]
+        );
     }
 }
