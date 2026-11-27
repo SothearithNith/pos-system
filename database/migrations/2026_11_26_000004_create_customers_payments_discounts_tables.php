@@ -18,7 +18,7 @@ return new class extends Migration
             $t->boolean('is_cash')->default(false);    // counts toward cash drawer
             $t->boolean('is_default')->default(false);
             $t->integer('sort_order')->default(0);
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'code']);
@@ -34,7 +34,7 @@ return new class extends Migration
             $t->decimal('discount_value', 12, 2)->default(0);
             $t->decimal('min_total_spent', 14, 2)->default(0);      // auto-upgrade threshold (base currency)
             $t->boolean('is_default')->default(false);
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'name_en']);
@@ -66,7 +66,7 @@ return new class extends Migration
             $t->timestamp('first_purchase_at')->nullable();
             $t->timestamp('last_purchase_at')->nullable();
 
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->timestamps();
 
             $t->unique(['client_id', 'code']);
@@ -91,12 +91,12 @@ return new class extends Migration
             $t->timestamp('ends_at')->nullable();
             $t->unsignedInteger('usage_limit')->nullable();
             $t->unsignedInteger('used_count')->default(0);
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->unsignedBigInteger('created_by')->nullable();
             $t->timestamps();
 
             $t->unique(['client_id', 'code']);
-            $t->index(['client_id', 'status', 'starts_at', 'ends_at']);
+            $t->index(['client_id', 'is_active', 'starts_at', 'ends_at']);
         });
 
         Schema::create('discount_products', function (Blueprint $t) {

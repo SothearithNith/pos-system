@@ -17,7 +17,8 @@ return new class extends Migration
             $t->string('address')->nullable();
             $t->string('logo')->nullable();
             $t->string('base_currency', 3)->default('USD');   // currency used for reports / customer totals
-            $t->boolean('status')->default(true);
+            $t->timestamp('expired_at')->nullable();           // subscription end date, NULL = never expires
+            $t->boolean('is_active')->default(true);
             $t->unsignedBigInteger('created_by')->nullable();  // platform admin (users table is created later)
             $t->timestamps();
         });
@@ -28,8 +29,10 @@ return new class extends Migration
             $t->string('name_en');
             $t->string('name_kh')->nullable();
             $t->string('abbreviation', 20);
+            $t->string('logo')->nullable();
+            $t->string('phone')->nullable();
             $t->string('address')->nullable();
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
             $t->unsignedBigInteger('created_by')->nullable();
             $t->timestamps();
 

@@ -22,7 +22,7 @@ return new class extends Migration
             $t->string('username')->unique();
             $t->string('password');
             $t->string('pos_pin')->nullable();          // hashed PIN (Hash::make) used to sign in to the cash register
-            $t->boolean('status')->default(true);
+            $t->boolean('is_active')->default(true);
 
             // store the SHA-256 hash, never the plain token
             $t->string('access_token', 64)->nullable()->unique();
