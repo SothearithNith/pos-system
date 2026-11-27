@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Menu;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
@@ -16,36 +15,38 @@ class MasterAdminSeeder extends Seeder
     public function run(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
-        $menus = Menu::whereNotNull('permission_name')->get(); 
-        foreach ($menus as $menu) {
-            Permission::firstOrCreate([
-                'name' => $menu->permission_name,
-                'guard_name' => 'web',
-            ]);
-        }
 
-        // Create Master Admin role
+        // One permission per menu item
+        Menu::whereNotNull('permission_name')
+            ->pluck('permission_name')
+            ->unique()
+            ->each(fn($name) => Permission::firstOrCreate([
+                'name' => $name,
+                'guard_name' => 'web',
+            ]));
+
+        // Master Admin role gets every permission
         $masterAdminRole = Role::firstOrCreate([
             'name' => 'Master Admin',
             'guard_name' => 'web',
         ]);
 
-        // Assign all permissions to Master Admin
         $masterAdminRole->syncPermissions(
             Permission::where('guard_name', 'web')->get()
         );
 
-        // Create default Master Admin user
+        // Platform admin: client_id = NULL means not tied to any client
         $masterAdmin = User::firstOrCreate(
             ['username' => 'admin'],
             [
-                'name' => 'Master Admin',
-                'password' => Hash::make('0!'),
-                'status' => true,
+                'client_id' => null,
+                'name_en'   => 'Master Admin',
+                'name_kh'   => 'អ្នកគ្រប់គ្រងមេ',
+                'password'  => Hash::make(env('MASTER_ADMIN_PASSWORD', '0')),
+                'is_active' => true,
             ]
         );
 
-        // Assign Master Admin role
         $masterAdmin->syncRoles([$masterAdminRole]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
