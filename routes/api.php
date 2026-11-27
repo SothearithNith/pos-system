@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ColorController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -22,6 +23,8 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/me', [AuthController::class, 'me'])->name('api.v1.me');
         Route::get('/user', [AuthController::class, 'me'])->name('api.v1.user');   // old URL
+
+        Route::apiResource('colors', ColorController::class);
 
         // ---- protect each route with its permission ----
         // Route::get('/products', [ProductController::class, 'index'])->middleware('permission:products.view');
