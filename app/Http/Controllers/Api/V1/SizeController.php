@@ -3,16 +3,25 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\V1\SizeResource;
+use App\Models\Size;
 use Illuminate\Http\Request;
 
 class SizeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $colors = Size::query()
+            ->when($request->has('is_active'), function ($query) use ($request) {
+                $query->where('is_active', $request->boolean('is_active'));
+            })
+            ->latest()
+            ->paginate($request->input('per_page', 10));
+
+        return SizeResource::collection($colors)
+            ->additional([
+                'message' => 'Size retrieved successfully.'
+            ]);
     }
 
     /**

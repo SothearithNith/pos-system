@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ColorController;
+use App\Http\Controllers\Api\V1\SizeController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -26,6 +27,8 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('colors', ColorController::class);
         Route::patch('colors/{color}/toggle-status', [ColorController::class, 'toggleStatus']);
+
+        Route::apiResource('/sizes', SizeController::class);
 
         // ---- protect each route with its permission ----
         // Route::get('/products', [ProductController::class, 'index'])->middleware('permission:products.view');
